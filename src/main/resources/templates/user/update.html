@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui"/>
+    <title>用户管理</title>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" th:href="@{/recourse/images/favicon.ico}" >
+    <link rel="stylesheet" th:href="@{/recourse/lib/layui-v2.6.3/css/layui.css}"  media="all">
+    <link rel="stylesheet" th:href="@{/resources/css/public.css}"  media="all">
+    <style>
+        .layui-form-label {
+            width: 120px !important;
+        }
+        .layui-input-block {
+            margin-left: 150px !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-form-item" style="margin-top: 20px">
+            <label class="layui-form-label">图片</label>
+            <div class="layui-input-block text1">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="test1">上传头像</button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" th:id="demo1" width="100px" style="border-radius: 50%"
+                             height="100px">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="layui-form" lay-filter="formtable">
+
+
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input type="text"  name="pass" value="123456" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                        <input type="hidden" name="id" id="id">
+                        <input type="hidden" name="head" id="head">
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-block">
+                        <input type="text"  name="nickname"  lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">电话</label>
+                    <div class="layui-input-block">
+                        <input type="text"  name="tel"  lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="adddd">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<script th:src="@{/recourse/lib/layui-v2.6.3/layui.js}"  charset="utf-8"></script>
+<script type="text/javascript" >
+    layui
+        .config({
+            base: "js/"
+        })
+        .use(
+            ['form', 'layer', 'jquery', 'layedit', 'laydate', 'upload', 'tree', 'element'],
+            function () {
+                var form = layui.form, layer = layui.layer, laypage = layui.laypage, layedit = layui.layedit,
+                    $ = layui.jquery, upload = layui.upload, tree = layui.tree, element = layui.element;
+
+                function getUParam(name, id) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 构造一个含有目标参数的正则表达式对象
+                    var r = decodeURIComponent(
+                        $("#" + id).attr("src").substr(
+                            $("#" + id).attr("src").indexOf("?"))
+                            .substr(1)).match(reg); // 匹配目标参数
+                    if (r != null)
+                        return unescape(r[2]);
+                    return ""; // 返回参数值
+                }
+                var dkh ="[[${dkh}]]";
+                var id ="[[${id}]]";
+                var uploadInst = upload
+                    .render({
+                        elem: '#test1',
+                        url: '/upload/image',
+                        before: function (obj) {
+                            // 预读本地文件示例，不支持ie8
+                            obj.preview(function (index, file, result) {
+                                $('#demo1').attr('src', result); // 图片链接（base64）
+                            });
+                        },
+                        done: function (res) {
+                            // 如果上传失败
+                            if (res.code== 0) {
+                                return layer.msg('上传失败');
+                            }
+                            // 上传成功
+                            var pic = $('#head');
+                            pic.val(res.data.url);
+                        },
+                        error: function () {
+                            // 演示失败状态，并实现重传
+                            var demoText = $('#demoText');
+                            demoText
+                                .html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                            demoText.find('.demo-reload').on('click',
+                                function () {
+                                    uploadInst.upload();
+                                });
+                        }
+                    });
+                // 监听提交
+                form.on('submit(adddd)', function (data) {
+                    parent.resetSwClose(true);
+                    layer.msg('正在保存。。。', {time: 1000}, function () {
+                    });
+                    var url = "";
+                    if (id != null && id != '')
+                        url =  "/user/update";
+                    else
+                        url =  "/user/add";
+                    $.getJSON(url, data.field,
+                        function (data) {
+                            console.log("返回的数据："+data.code)
+                            if (data.code === '200') {
+                                parent.layer.closeAll();
+                                parent.reloadList();
+                            } else {
+                                layer.msg('密码保存失败'+data.msg, {
+                                    time: 1000
+                                }, function () {
+                                    alert(data.msg)
+                                });
+                                parent.resetSwClose(false);
+                            }
+                        });
+                    return false;
+                });
+                // 获取信息
+                if (id != null && id != '') {
+                    $.getJSON("/user/get", "id=" + id, function (jsondata) {
+                        if (jsondata.code == '200') {
+                            console.log(JSON.stringify(jsondata.data));
+                            //表单初始赋值
+                            form.val('formtable', JSON.parse(JSON.stringify(jsondata.data)));
+                            $("#demo1").attr("src","http://localhost:8088/public/"+jsondata.data.head);
+
+                        } else {
+                            $("#subpost").attr("disabled", "disabled").addClass("layui-btn-disabled");
+                            layer.msg(jsondata.msg, {time: 2000}, function () {
+                                parent.layer.closeAll('iframe');
+                            });
+                        }
+                    });
+                }
+
+
+            })
+
+
+</script>
+
+</body>
+</html>

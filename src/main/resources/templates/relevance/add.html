@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui"/>
+    <title>用户管理</title>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" th:href="@{/recourse/images/favicon.ico}" >
+    <link rel="stylesheet" th:href="@{/recourse/lib/layui-v2.6.3/css/layui.css}"  media="all">
+    <link rel="stylesheet" th:href="@{/resources/css/public.css}"  media="all">
+    <style>
+        .layui-form-label {
+            width: 120px !important;
+        }
+        .layui-input-block {
+            margin-left: 150px !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+
+        <form class="layui-form" lay-filter="formtable">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+
+                    <label class="layui-form-label">景点:</label>
+                    <div class="layui-input-block text1">
+                        <select name="rid">
+                            <option th:each="dic:${dlist}" th:text="${dic.name}" th:value="${dic.id}" >请选择景点</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="adddd">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<script th:src="@{/recourse/lib/layui-v2.6.3/layui.js}"  charset="utf-8"></script>
+<script type="text/javascript" >
+    layui
+        .config({
+            base: "js/"
+        })
+        .use(
+            ['form', 'layer', 'jquery', 'layedit', 'laydate', 'upload', 'tree', 'element'],
+            function () {
+                var form = layui.form, layer = layui.layer, laypage = layui.laypage, layedit = layui.layedit,
+                    $ = layui.jquery, upload = layui.upload, tree = layui.tree, element = layui.element;
+
+                function getUParam(name, id) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 构造一个含有目标参数的正则表达式对象
+                    var r = decodeURIComponent(
+                        $("#" + id).attr("src").substr(
+                            $("#" + id).attr("src").indexOf("?"))
+                            .substr(1)).match(reg); // 匹配目标参数
+                    if (r != null)
+                        return unescape(r[2]);
+                    return ""; // 返回参数值
+                }
+                var id ="[[${id}]]";
+                var tid ="[[${tid}]]";
+
+
+                // 监听提交
+                form.on('submit(adddd)', function (data) {
+                    parent.resetSwClose(true);
+                    layer.msg('正在保存。。。', {time: 1000}, function () {
+                    });
+                    var url = "";
+                    if (id != null && id != '')
+                        url =  "/relevance/update";
+                    else
+                        url =  "/relevance/add?tid="+tid;
+                    $.getJSON(url, data.field,
+                        function (data) {
+                            console.log("返回的数据："+data.code)
+                            if (data.code === '200') {
+                                parent.layer.closeAll();
+                                parent.reloadList();
+                            } else {
+                                layer.msg('密码保存失败'+data.msg, {
+                                    time: 1000
+                                }, function () {
+                                    alert(data.msg)
+                                });
+                                parent.resetSwClose(false);
+                            }
+                        });
+                    return false;
+                });
+                // 获取信息
+                if (id != null && id != '') {
+                    $.getJSON("/relevance/get", "id=" + id, function (jsondata) {
+                        if (jsondata.code == '200') {
+                            console.log(JSON.stringify(jsondata.data));
+                            //表单初始赋值
+                            form.val('formtable', JSON.parse(JSON.stringify(jsondata.data)));
+                            $("#demo1").attr("src","http://localhost:8088/public/"+jsondata.data.pic);
+
+                        } else {
+                            $("#subpost").attr("disabled", "disabled").addClass("layui-btn-disabled");
+                            layer.msg(jsondata.msg, {time: 2000}, function () {
+                                parent.layer.closeAll('iframe');
+                            });
+                        }
+                    });
+                }
+
+
+            })
+
+
+</script>
+
+</body>
+</html>

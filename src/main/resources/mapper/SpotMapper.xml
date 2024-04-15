@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzh.dao.SpotMapper">
+  <resultMap id="BaseResultMap" type="com.wzh.model.Spot">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="path1" jdbcType="VARCHAR" property="path1" />
+    <result column="path2" jdbcType="VARCHAR" property="path2" />
+    <result column="path3" jdbcType="VARCHAR" property="path3" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="traffic" jdbcType="VARCHAR" property="traffic" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, pic, type, price, content, path1, path2, path3, time, address, traffic
+  </sql>
+  <select id="findAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from spot
+    <where>
+      <if test="name != null and name != ''">
+        name like '%${name}%'
+      </if>
+    </where>
+    order by time desc
+  </select>
+  <select id="findgh" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from spot
+    <where>
+      <if test="name != null and name != ''">
+        traffic like '%${name}%' or type like '%${name}%'
+      </if>
+    </where>
+    ORDER BY RAND() limit 5
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from spot
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from spot
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wzh.model.Spot">
+    insert into spot (id, name, pic,
+      type, price, content,
+      path1, path2, path3,
+      time, address, traffic
+      )
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{content,jdbcType=VARCHAR},
+      #{path1,jdbcType=VARCHAR}, #{path2,jdbcType=VARCHAR}, #{path3,jdbcType=VARCHAR},
+      #{time,jdbcType=TIMESTAMP}, #{address,jdbcType=VARCHAR}, #{traffic,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wzh.model.Spot">
+    insert into spot
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="pic != null">
+        pic,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="path1 != null">
+        path1,
+      </if>
+      <if test="path2 != null">
+        path2,
+      </if>
+      <if test="path3 != null">
+        path3,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="traffic != null">
+        traffic,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null">
+        #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="path1 != null">
+        #{path1,jdbcType=VARCHAR},
+      </if>
+      <if test="path2 != null">
+        #{path2,jdbcType=VARCHAR},
+      </if>
+      <if test="path3 != null">
+        #{path3,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="traffic != null">
+        #{traffic,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wzh.model.Spot">
+    update spot
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="path1 != null">
+        path1 = #{path1,jdbcType=VARCHAR},
+      </if>
+      <if test="path2 != null">
+        path2 = #{path2,jdbcType=VARCHAR},
+      </if>
+      <if test="path3 != null">
+        path3 = #{path3,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="traffic != null">
+        traffic = #{traffic,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wzh.model.Spot">
+    update spot
+    set name = #{name,jdbcType=VARCHAR},
+      pic = #{pic,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      content = #{content,jdbcType=VARCHAR},
+      path1 = #{path1,jdbcType=VARCHAR},
+      path2 = #{path2,jdbcType=VARCHAR},
+      path3 = #{path3,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      address = #{address,jdbcType=VARCHAR},
+      traffic = #{traffic,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

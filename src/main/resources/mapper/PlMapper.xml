@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzh.dao.PlMapper">
+  <resultMap id="BaseResultMap" type="com.wzh.model.Pl">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="pics" jdbcType="VARCHAR" property="pics" />
+    <result column="uid" jdbcType="VARCHAR" property="uid" />
+    <result column="tid" jdbcType="VARCHAR" property="tid" />
+    <result column="msg" jdbcType="VARCHAR" property="msg" />
+    <result column="rate" jdbcType="VARCHAR" property="rate" />
+    <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="fwrate" jdbcType="VARCHAR" property="fwrate" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="head" jdbcType="VARCHAR" property="head" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pics, uid, tid, msg, rate, time, fwrate
+  </sql>
+  <select id="findAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT u.nickname,u.head,p.* FROM pl p
+    LEFT JOIN `user` u on u.id = p.uid
+    <where>
+      <if test="tid != null and tid != ''">
+        and tid = #{tid,jdbcType=VARCHAR}
+      </if>
+
+    </where>
+    order by time desc
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pl
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from pl
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.wzh.model.Pl">
+    insert into pl (id, pics, uid,
+      tid, msg, rate, time,
+      fwrate)
+    values (#{id,jdbcType=VARCHAR}, #{pics,jdbcType=VARCHAR}, #{uid,jdbcType=VARCHAR},
+      #{tid,jdbcType=VARCHAR}, #{msg,jdbcType=VARCHAR}, #{rate,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP},
+      #{fwrate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wzh.model.Pl">
+    insert into pl
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="pics != null">
+        pics,
+      </if>
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="tid != null">
+        tid,
+      </if>
+      <if test="msg != null">
+        msg,
+      </if>
+      <if test="rate != null">
+        rate,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="fwrate != null">
+        fwrate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="pics != null">
+        #{pics,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null">
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null">
+        #{tid,jdbcType=VARCHAR},
+      </if>
+      <if test="msg != null">
+        #{msg,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        #{rate,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwrate != null">
+        #{fwrate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wzh.model.Pl">
+    update pl
+    <set>
+      <if test="pics != null">
+        pics = #{pics,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null">
+        uid = #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null">
+        tid = #{tid,jdbcType=VARCHAR},
+      </if>
+      <if test="msg != null">
+        msg = #{msg,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null">
+        rate = #{rate,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwrate != null">
+        fwrate = #{fwrate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wzh.model.Pl">
+    update pl
+    set pics = #{pics,jdbcType=VARCHAR},
+      uid = #{uid,jdbcType=VARCHAR},
+      tid = #{tid,jdbcType=VARCHAR},
+      msg = #{msg,jdbcType=VARCHAR},
+      rate = #{rate,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      fwrate = #{fwrate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
